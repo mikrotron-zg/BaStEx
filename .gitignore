@@ -1,4 +1,5 @@
-# ignored Eclipse files
+# Ignoring Eclipse settings and compiled files
+/bin/
 .classpath
 .project
 .settings/
