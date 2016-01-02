@@ -1,0 +1,4 @@
+# ignored Eclipse files
+.classpath
+.project
+.settings/
