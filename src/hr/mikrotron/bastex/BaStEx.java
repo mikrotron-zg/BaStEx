@@ -9,12 +9,16 @@ import java.io.*;
 public class BaStEx {
 
 	public static void main(String[] args) {
-		String testFile="testdata/pbztest.pdf";
+		String testFile="testdata/pbztest_big.pdf";
 		try{
-			System.out.println("Početak...");
-			String res=new PDFManager(testFile).getText();
+			System.out.println("Početak...\n\n");
+			//String res=new PDFManager(testFile).getText();
 			//writeToFile(testFile + ".out", res);
-			System.out.println(clearedText(res));
+			//System.out.println(clearedText(res));
+			BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
+			BankStatement bs=new BankStatement();
+			bsp.parse(bs);
+			System.out.println("\n\n\nRezultat: " + bs.getDate());
 		}
 		catch (Exception e){
 			System.out.println(e.getMessage());
