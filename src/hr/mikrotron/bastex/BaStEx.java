@@ -18,7 +18,7 @@ public class BaStEx {
 			BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
 			BankStatement bs=new BankStatement();
 			bsp.parse(bs);
-			System.out.println("\n\n\nRezultat: " + bs.getDate());
+			System.out.println("\n\n\nRezultat: " + bs.getDebitTransactionsTotal());
 		}
 		catch (Exception e){
 			System.out.println(e.getMessage());

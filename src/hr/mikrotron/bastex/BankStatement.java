@@ -2,6 +2,10 @@ package hr.mikrotron.bastex;
 
 import java.util.Date;
 
+/**Holds data extracted form PDF bank statement
+ * @author prexy
+ * @version 0.1
+ */
 public class BankStatement {
 
 	private int number;
