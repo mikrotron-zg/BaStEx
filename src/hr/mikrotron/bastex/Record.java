@@ -31,7 +31,12 @@ public class Record {
 	}
 
 	public String getRecord(int index) {
-		return records.get(index);
+		try{
+			return records.get(index);
+		}
+		catch (IndexOutOfBoundsException iob){
+			return "";
+		}
 	}
 
 	public int getRecordIndex(String searchString){

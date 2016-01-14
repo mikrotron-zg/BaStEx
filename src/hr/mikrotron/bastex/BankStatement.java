@@ -1,6 +1,8 @@
 package hr.mikrotron.bastex;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**Holds data extracted form PDF bank statement
  * @author prexy
@@ -15,6 +17,7 @@ public class BankStatement {
 	private double outputBalance;
 	private double debitTransactionsTotal; //ukupni dugovni promet
 	private double creditTransacionsTotal; //ukupni potražni promet
+	private List<Transaction> transactions = new ArrayList<Transaction>();
 	
 	public int getNumber() {
 		return number;
