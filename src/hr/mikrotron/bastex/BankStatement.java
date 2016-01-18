@@ -61,6 +61,81 @@ public class BankStatement {
 	public void setCreditTransacionsTotal(double creditTransacionsTotal) {
 		this.creditTransacionsTotal = creditTransacionsTotal;
 	}
+	public List<Transaction> getTransactions() {
+		return transactions;
+	}
+	public void setTransactions(List<Transaction> transactions) {
+		this.transactions = transactions;
+	}
 	
+	public Transaction getTransaction(int index){
+		try{
+			return transactions.get(index);
+		}
+		catch (IndexOutOfBoundsException iob){
+			return null;
+		}
+	}
 	
+	public boolean addTransaction(Transaction transaction){
+		if (!this.isComplete()){
+			return false;	//don't add transaction, bank statement is complete!
+		}else{
+			transactions.add(transaction);
+			return true;
+		}
+	}
+	
+	public int getTransactionsCount(){
+		return transactions.size();
+	}
+	
+	/**Checks if balance, credit, debit and total of transactions fits bank statement data
+	 * @return true if bank statement and transactions data correspond to each other
+	 */
+	public boolean isComplete(){
+		if (transactions.size()==0) return false;	// bank statement must have transactions!
+		return balanceCheck() && totalCheck() && creditCheck() && debitCheck();
+	}
+	
+	/**Checks if sum of all transactions equals bank statement's input and output balance
+	 * @return true if transactions sum checks out with statement's balance data
+	 */
+	private boolean totalCheck(){
+		double total=0;
+		for (Transaction t : transactions) total += t.getAmount();
+		if (total==outputBalance-inputBalance) return true; else return false;
+	}
+	
+	/**Checks if sum of debit (outgoing) transactions equals bank statement's 
+	 * debit transactions total 
+	 * @return true if it checks out
+	 */
+	private boolean debitCheck(){
+		double debit=0;
+		for (Transaction t : transactions){
+			if (t.getAmount()<0) debit += t.getAmount();
+		}
+		if (debit==debitTransactionsTotal*-1) return true; else return false;
+	}
+	
+	/**Checks if sum of credit (incoming) transactions equals bank statement's 
+	 * credit transactions total
+	 * @return true if it checks out
+	 */
+	private boolean creditCheck(){
+		double credit=0;
+		for (Transaction t : transactions){
+			if (t.getAmount()>0) credit += t.getAmount();
+		}
+		if (credit==creditTransacionsTotal) return true; else return false;
+	}
+	
+	/**Checks if last transaction's balance equals bank statement's output balance
+	 * @return true if it checks out
+	 */
+	private boolean balanceCheck(){
+		if (transactions.get(transactions.size()-1).getBalance()==outputBalance) return true;
+			else return false;
+	}
 }

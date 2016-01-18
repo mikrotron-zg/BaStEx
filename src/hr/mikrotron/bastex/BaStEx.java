@@ -8,6 +8,8 @@ import java.io.*;
  */
 public class BaStEx {
 
+	public static final boolean DEBUG=true; //needs to be false for production code !!!
+	
 	public static void main(String[] args) {
 		String testFile="testdata/pbztest_big.pdf";
 		try{

@@ -18,6 +18,9 @@ public class RecordTest {
 	public static String fileName="testdata/pbztest_big.pdf.out";
 	static final String LAST_RECORD="*** KRAJ IZVATKA ***";
 	static final String FIRST_RECORD="OIB: 02535697732      IZVADAK PO TRANSAKCIJSKOM RAČUNU       ";
+	static final int GET_RECORD_INDEX=190;
+	static final String GET_RECORD_INDEX_SEARCH_STRING="HR00";
+	static final int GET_RECORD_INDEX_RESULT=194;
 	static final String NONEXISTING_STRING="This string is not in the record!";
 	static final int RECORD_SIZE=325;
 	static final int DOUBLE_INDEX=51;
@@ -67,6 +70,9 @@ public class RecordTest {
 				324, testRecord.getRecordIndex(LAST_RECORD));
 		assertEquals("getRecordIndex() fails for non-existing string", 
 				RECORD_SIZE, testRecord.getRecordIndex(NONEXISTING_STRING));
+		assertEquals("getRecordIndex(startAt) fails for index 190", 
+				GET_RECORD_INDEX_RESULT, testRecord.getRecordIndex(
+						GET_RECORD_INDEX_SEARCH_STRING, GET_RECORD_INDEX));
 	}
 
 	@Test

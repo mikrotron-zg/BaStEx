@@ -30,6 +30,10 @@ public class Record {
 		extractRecords();
 	}
 
+	/**Gets record for given index
+	 * @param index index of record
+	 * @return record string for given index, if out of bounds, returns empty string
+	 */
 	public String getRecord(int index) {
 		try{
 			return records.get(index);
@@ -39,12 +43,35 @@ public class Record {
 		}
 	}
 
+	/**Searches record for specified string, starting from the first record
+	 * @param searchString string to find
+	 * @return index of first string occurrence, or list array size if not found (forwarding 
+	 * this index to <i>getRecord()</i> will throw IOB Exception
+	 */
 	public int getRecordIndex(String searchString){
-		for (int i=0 ; i<records.size() ; i++){
+		return getRecordIndex(searchString,0); //search from start
+	}
+	
+	/**Searches record for specified string, starting from given index (included)
+	 * @param searchString string to find
+	 * @param startAt index to start search from
+	 * @return index of first string occurrence, or list array size if not found (forwarding 
+	 * this index to <i>getRecord()</i> will throw IOB Exception
+	 */
+	public int getRecordIndex(String searchString, int startAt){
+		if (startAt>= records.size()) return records.size(); //start index is out of bounds
+		for (int i=startAt ; i<records.size() ; i++){
 			if (records.get(i).indexOf(searchString)>=0) return i;
 		}
-		return records.size();  //using this as arraylist index will raise IOOBexception
+		return records.size();  //using this as arraylist index will raise IOOBexception		
 	}
+
+
+	public int findTransactionStartIndex(int transactionOrdinal, int startIndex) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 	
 	/**Extracts lines containing text to <i>records</i> ArrayList, at the same time
 	 * recording number of empty lines BEFORE each line of text and saving it to
@@ -62,7 +89,7 @@ public class Record {
 				gapCounter=0;
 			}
 		}
-		printResult();//debug only
+		if (BaStEx.DEBUG) printResult();//debug only
 	}
 	
 	private void printResult(){
