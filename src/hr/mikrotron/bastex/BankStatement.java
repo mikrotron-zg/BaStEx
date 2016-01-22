@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class BankStatement {
 
+	final static double EPS=0.0001; //double comparison precision
 	private int number;
 	private Date date;
 	private String currency;
@@ -78,7 +79,7 @@ public class BankStatement {
 	}
 	
 	public boolean addTransaction(Transaction transaction){
-		if (!this.isComplete()){
+		if (this.isComplete()){
 			return false;	//don't add transaction, bank statement is complete!
 		}else{
 			transactions.add(transaction);
@@ -104,7 +105,7 @@ public class BankStatement {
 	private boolean totalCheck(){
 		double total=0;
 		for (Transaction t : transactions) total += t.getAmount();
-		if (total==outputBalance-inputBalance) return true; else return false;
+		if (Math.abs(total - (outputBalance-inputBalance)) <= EPS) return true; else return false;
 	}
 	
 	/**Checks if sum of debit (outgoing) transactions equals bank statement's 
@@ -116,7 +117,7 @@ public class BankStatement {
 		for (Transaction t : transactions){
 			if (t.getAmount()<0) debit += t.getAmount();
 		}
-		if (debit==debitTransactionsTotal*-1) return true; else return false;
+		if (Math.abs(debit - debitTransactionsTotal) <= EPS) return true; else return false;
 	}
 	
 	/**Checks if sum of credit (incoming) transactions equals bank statement's 
@@ -128,14 +129,15 @@ public class BankStatement {
 		for (Transaction t : transactions){
 			if (t.getAmount()>0) credit += t.getAmount();
 		}
-		if (credit==creditTransacionsTotal) return true; else return false;
+		if (Math.abs(credit - creditTransacionsTotal) <= EPS) return true; else return false;
 	}
 	
 	/**Checks if last transaction's balance equals bank statement's output balance
 	 * @return true if it checks out
 	 */
 	private boolean balanceCheck(){
-		if (transactions.get(transactions.size()-1).getBalance()==outputBalance) return true;
+		if (Math.abs(transactions.get(transactions.size()-1).getBalance() - outputBalance) <= EPS) 
+			return true;
 			else return false;
 	}
 }

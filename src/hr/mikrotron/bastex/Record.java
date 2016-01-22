@@ -30,6 +30,19 @@ public class Record {
 		extractRecords();
 	}
 
+	/**Returns gap (number of empty lines) BEFORE a record
+	 * @param index record index
+	 * @return number of empty lines before record or -1 if index is out of bounds
+	 */
+	public int getGap(int index){
+		try{
+			return gaps.get(index);
+		}
+		catch (IndexOutOfBoundsException iob){
+			return -1;
+		}		
+	}
+	
 	/**Gets record for given index
 	 * @param index index of record
 	 * @return record string for given index, if out of bounds, returns empty string
@@ -67,9 +80,19 @@ public class Record {
 	}
 
 
-	public int findTransactionStartIndex(int transactionOrdinal, int startIndex) {
-		// TODO Auto-generated method stub
-		return 0;
+	/**Searches for transaction start record index
+	 * @param transactionOrdinal string representation of transaction's ordinal number
+	 * @param startIndex index from which to start search
+	 * @return record index of transaction start or -1 if transaction not found
+	 */
+	public int findTransactionStartIndex(String transactionOrdinal, int startIndex) {
+		int res = getRecordIndex(transactionOrdinal, startIndex);
+		if (res==records.size()) return -1; //transaction not found!
+		if (getRecord(res).length()==transactionOrdinal.length()){
+			return res;
+		}else{
+			return findTransactionStartIndex(transactionOrdinal, res+1);
+		}
 	}
 
 	

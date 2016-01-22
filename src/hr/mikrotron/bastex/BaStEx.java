@@ -1,6 +1,9 @@
 package hr.mikrotron.bastex;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.util.Locale;
+
 
 /**BankStatementExtractor command line version used for text extraction testing
  * @author prexy
@@ -20,7 +23,12 @@ public class BaStEx {
 			BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
 			BankStatement bs=new BankStatement();
 			bsp.parse(bs);
-			System.out.println("\n\n\nRezultat: " + bs.getDebitTransactionsTotal());
+			System.out.println("\n\n\nRezultat: " + bs.getTransactionsCount() + " transakcija na izvodu " 
+					+ bs.getNumber() + " od " + 
+					DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.GERMANY).format(bs.getDate()));
+			Transaction tr = bs.getTransaction(bs.getTransactionsCount()-1);
+			System.out.println("Zadnja transakcija: " + tr.getPayer() + " prema " + tr.getRecipient() + 
+					" u iznosu od " + tr.getAmount() + " kn. Stanje: " + tr.getBalance() + " kn");
 		}
 		catch (Exception e){
 			System.out.println(e.getMessage());

@@ -39,6 +39,14 @@ public class RecordTest {
 	static final String DATE_SEARCH_STRING="18.12.2015";
 	static final String DATE_SEARCH_STRING_WITH_OFFSET="Datum izvatka:";
 	static final int DATE_SEARCH_OFFSET=1;
+	static final String FIRST_TRANS="1";
+	static final int FIRST_TRANS_INDEX=40;
+	static final String SECOND_PAGE_TRANS="9";
+	static final int SECOND_PAGE_TRANS_INDEX=164;
+	static final String LAST_TRANS="19";
+	static final int LAST_TRANS_INDEX=312;
+	static final int GAP=9;
+	static final int GAP_INDEX=49;
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
@@ -52,6 +60,12 @@ public class RecordTest {
 		}
 	}
 
+	@Test
+	public void testGetGap(){
+		assertEquals("should return -1 for index out of bounds", -1, testRecord.getGap(-1));
+		assertEquals("should return gap", GAP, testRecord.getGap(GAP_INDEX));
+	}
+	
 	@Test
 	public void testGetRecord() {
 		assertEquals("getRecord() fails for first record",
@@ -75,6 +89,18 @@ public class RecordTest {
 						GET_RECORD_INDEX_SEARCH_STRING, GET_RECORD_INDEX));
 	}
 
+	@Test
+	public void testFindTransactionStartIndex(){
+		assertEquals("should not find bank statement number as transaction ordinal", 
+				-1, testRecord.findTransactionStartIndex(INT_SEARCH_STRING, 0));
+		assertEquals("should find first transaction", FIRST_TRANS_INDEX, 
+				testRecord.findTransactionStartIndex(FIRST_TRANS,0));
+		assertEquals("should find first transaction on second page", SECOND_PAGE_TRANS_INDEX, 
+				testRecord.findTransactionStartIndex(SECOND_PAGE_TRANS, 0));
+		assertEquals("should find last transaction", LAST_TRANS_INDEX, 
+				testRecord.findTransactionStartIndex(LAST_TRANS, 0));
+	}
+	
 	@Test
 	public void testAsDoubleInt() {
 		try {
