@@ -11,29 +11,36 @@ import java.util.Locale;
  */
 public class BaStEx {
 
-	public static final boolean DEBUG=true; //needs to be false for production code !!!
+	public static final boolean DEBUG=false; //needs to be false for production code !!!
+	public static final double EPS=0.0001; //double comparison precision	
 	
 	public static void main(String[] args) {
-		String testFile="testdata/pbztest_big.pdf";
-		try{
-			System.out.println("Početak...\n\n");
-			//String res=new PDFManager(testFile).getText();
-			//writeToFile(testFile + ".out", res);
-			//System.out.println(clearedText(res));
-			BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
-			BankStatement bs=new BankStatement();
-			bsp.parse(bs);
-			System.out.println("\n\n\nRezultat: " + bs.getTransactionsCount() + " transakcija na izvodu " 
-					+ bs.getNumber() + " od " + 
-					DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.GERMANY).format(bs.getDate()));
-			Transaction tr = bs.getTransaction(bs.getTransactionsCount()-1);
-			System.out.println("Zadnja transakcija: " + tr.getPayer() + " prema " + tr.getRecipient() + 
-					" u iznosu od " + tr.getAmount() + " kn. Stanje: " + tr.getBalance() + " kn");
-		}
-		catch (Exception e){
-			System.out.println(e.getMessage());
-		}
+		
+		new BatchExtract("/home/prexy/Dropbox/MIKROTRON/izvodi");
+		
 	}
+	
+//	public static void main(String[] args) {
+//		String testFile="testdata/pbztest_big.pdf";
+//		try{
+//			System.out.println("Početak...\n\n");
+//			//String res=new PDFManager(testFile).getText();
+//			//writeToFile(testFile + ".out", res);
+//			//System.out.println(clearedText(res));
+//			BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
+//			BankStatement bs=new BankStatement();
+//			bsp.parse(bs);
+//			System.out.println("\n\n\nRezultat: " + bs.getTransactionsCount() + " transakcija na izvodu " 
+//					+ bs.getNumber() + " od " + 
+//					DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.GERMANY).format(bs.getDate()));
+//			Transaction tr = bs.getTransaction(bs.getTransactionsCount()-1);
+//			System.out.println("Zadnja transakcija: " + tr.getPayer() + " prema " + tr.getRecipient() + 
+//					" u iznosu od " + tr.getAmount() + " kn. Stanje: " + tr.getBalance() + " kn");
+//		}
+//		catch (Exception e){
+//			System.out.println(e.getMessage());
+//		}
+//	}
 	
 	static void writeToFile(String fileName, String content){
 		try (Writer writer = new BufferedWriter(new OutputStreamWriter(

@@ -45,8 +45,7 @@ public class PDFManager {
 	 * @throws IOException
 	 */
 	public String getText(int startPage, int endPage) throws FileNotFoundException, IOException{
-		
-		//TODO check page numbers, throw exceptions if needed
+		String res;
 		file=new File(filepath);
 		PDFParser parser = new PDFParser(new RandomAccessFile(file,"r")); //for PDFBox 2.0 or later
 		parser.parse();
@@ -55,7 +54,8 @@ public class PDFManager {
 		pdDoc = new PDDocument(cosDoc);
 		pdfStripper.setStartPage(startPage<=0 ? 1 : startPage);
 		pdfStripper.setEndPage(endPage==0 ? pdDoc.getNumberOfPages() : endPage);
-		return pdfStripper.getText(pdDoc);
-
+		res = pdfStripper.getText(pdDoc);
+		pdDoc.close();
+		return res;
 	}
 }
