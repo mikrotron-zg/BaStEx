@@ -13,7 +13,7 @@ import java.util.Date;
 public class BankStatementParser {
 
 	private final String OWNER = "MIKROTRON";
-	private final int MAX_TRANSACTIONS=20;	//maximum allowed number of transactions in single statement
+	private final int MAX_TRANSACTIONS=1000;	//maximum allowed number of transactions in single statement
 	private Record record;
 	private int cursor;	//index cursor, equals to current position in record
 	private double runningBalance;
@@ -56,6 +56,12 @@ public class BankStatementParser {
 		bs.setOutputBalance(record.asDouble("Novo stanje:", 1));
 	}
 	
+	/**Parses all transactions in single bank statement and adds them to 
+	 * {@link BankStatement Bank Statement}
+	 * @param bs bank statement which transactions are being parsed
+	 * @throws Exception if there seems to be too many transactions in single 
+	 * bank statement (regulated by MAX_TRANSACTIONS constraint)
+	 */
 	private void parseTransactions(BankStatement bs) throws Exception{
 		cursor=0;
 		int counter=1;	//counts transactions
@@ -64,10 +70,9 @@ public class BankStatementParser {
 		
 		while (!endOfStatement){
 			cursor=record.findTransactionStartIndex(String.valueOf(counter), cursor);	//find transaction start
-			//TODO implement transaction parser
 			bs.addTransaction(readTransaction(counter));
 			
-			System.out.println("Transakcija: " + counter + " od " + bs.getTransactionsCount());
+			//System.out.println("Transakcija: " + counter + " od " + bs.getTransactionsCount());
 
 			counter++;
 			if (bs.isComplete()) endOfStatement=true;
@@ -76,6 +81,10 @@ public class BankStatementParser {
 		
 	}
 	
+	/**Reads data contained in single transaction
+	 * @param counter ordinal number of transaction in bank statement
+	 * @return {@link Transaction Transaction} object
+	 */
 	private Transaction readTransaction(int counter){
 		
 		cursor++;
@@ -92,8 +101,7 @@ public class BankStatementParser {
 		String desc = readDescription();
 		
 		String code=readLine(9-2*descLines);
-//		String exRate=readLine(3);	//exRate nema na HRK izvodima
-		String exRate="";
+		double exRate=0.0; // we assume there is no exchange rate, it will be checked later
 		Date curDate;
 		Date exeDate;
 		
@@ -103,8 +111,18 @@ public class BankStatementParser {
 			exeDate=record.asDate(cursor);
 			cursor++;
 		} catch (IndexOutOfBoundsException | ParseException e) {
-			System.out.println("Greška kod čitanja datuma za transakciju " + tranNumber);
-			return null;
+			//exception means there is exchange rate for this transaction
+			try {
+				exRate=record.asDouble(cursor);
+				cursor++; //and now we read dates
+				curDate=record.asDate(cursor);
+				cursor++;
+				exeDate=record.asDate(cursor);
+				cursor++;
+			} catch (IndexOutOfBoundsException | ParseException e1) {
+				System.out.println("Greška kod čitanja datuma za transakciju " + tranNumber);
+				return null;
+			}
 		}
 		
 		Double amount=readAmount();
@@ -113,26 +131,24 @@ public class BankStatementParser {
 		//using tricks to keep 2 decimal places precision for double :-)
 		runningBalance = BigDecimal.valueOf(runningBalance).setScale(2, RoundingMode.HALF_UP).doubleValue();
 		
-		//debug
-//		System.out.println("Transakcija br. " + counter);
-//		System.out.println("Platitelj: " + payer);
-//		System.out.println("Primatelj: " + recipient);
-//		System.out.println("Poziv platitelja  " + ref[0] + " " + ref[1]);
-//		System.out.println("Poziv pprimatelja  " + ref[2] + " " + ref[3]);
-//		System.out.println("Opis: " + desc);
-//		System.out.println("Datum valute: " + curDate);
-//		System.out.println("Datum izvršenja: " + exeDate);
-//		System.out.println("Iznos: " + amount);
-		
 		return new Transaction(tranNumber, tranNumber2, IBAN, payer, recipient, ref[0], ref[2], 
 				ref[1], ref[3], desc, code, exRate, curDate, exeDate, amount, runningBalance);
 		
 	}
 	
+	/**Reads single line for which the gap equals to 1, i.e. there is
+	 * no gap in data prior to this line
+	 * @return data as String
+	 */
 	private String readLine(){
 		return readLine(1);
 	}
 	
+	/**Reads single line if gap equals to gap parameter passed to method
+	 * @param gap odd number describing the depth of gap (1 means no gap, 3 is one skipped line, 
+	 * 5 is equal to 3 skipped lines and so on)
+	 * @return data as String
+	 */
 	private String readLine(int gap){
 		String res="";
 		if (record.getGap(cursor)==gap){
@@ -142,6 +158,9 @@ public class BankStatementParser {
 		return res;
 	}
 	
+	/**Parses and reads party data which could be payer or recipient
+	 * @return name and address of party
+	 */
 	private String readParty(){
 		String res=record.getRecord(cursor);
 		cursor++;
@@ -156,6 +175,13 @@ public class BankStatementParser {
 		return res;
 	}
 	
+	/**Reads transaction references and models
+	 * @return 4-member String array containing:
+	 * - at index 0 payers model
+	 * - at index 1 payers reference
+	 * - at index 2 recipients model
+	 * - at index 3 recipients reference
+	 */
 	private String[] readReferences(){
 		String[] res = new String[4];
 		String read = record.getRecord(cursor);
@@ -171,13 +197,18 @@ public class BankStatementParser {
 		return res;
 	}
 	
+	/**Reads and formats transaction description
+	 * @return transaction description
+	 */
 	private String readDescription(){
+		if (record.getGap(cursor)==13) return ""; //no description!!
 		String res = record.getRecord(cursor);
+		descLines=1;
 		cursor++;
 		for (int i=1; i<4; i++){
-			descLines=i;
 			if (record.getGap(cursor)==1){
 				res += record.getRecord(cursor);
+				descLines++;
 				cursor++;
 			}else{
 				break;
@@ -188,6 +219,10 @@ public class BankStatementParser {
 				
 	}
 	
+	/**Reads transaction amount as double and gives it negative sign if it is 
+	 * debit transaction (owner of account is paying to someone)
+	 * @return transaction amount
+	 */
 	private Double readAmount(){
 			try {
 				if (record.getGap(cursor)==1) return record.asDouble(cursor)*(-1);

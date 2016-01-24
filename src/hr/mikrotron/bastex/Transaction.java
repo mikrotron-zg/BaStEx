@@ -3,7 +3,9 @@ package hr.mikrotron.bastex;
 import java.util.Date;
 
 /**Holds information about single transaction as well as balance
- * AFTER transaction is conducted
+ * AFTER transaction is conducted. Once instantiated, transaction 
+ * object contains only read-only data, i.e. transaction data 
+ * cannot be changed
  * @author prexy
  * @version 0.1
  */
@@ -20,7 +22,7 @@ public class Transaction {
 	private String recipientReferenceNumber;
 	private String description;
 	private String assignementCode;
-	private String exchangeRate;
+	private double exchangeRate;
 	private Date currencyDate;
 	private Date executionDate;
 	private double amount;
@@ -30,7 +32,7 @@ public class Transaction {
 			String IBAN, String payer, String recipient, String payerReferenceModel,
 			String recipientReferenceModel, String payerReferenceNumber, 
 			String recipientReferenceNumber, String description, String assignementCode, 
-			String exchangeRate, Date currencyDate, Date executionDate, double amount, double balance){
+			double exchangeRate, Date currencyDate, Date executionDate, double amount, double balance){
 		
 		this.transactionNumber=transactionNumber;
 		this.additionalTransactionNumber=additionalTransactionNumber;
@@ -40,6 +42,7 @@ public class Transaction {
 		this.payerReferenceModel=payerReferenceModel;
 		this.recipientReferenceModel=recipientReferenceModel;
 		this.payerReferenceNumber=payerReferenceNumber;
+		this.recipientReferenceNumber=recipientReferenceNumber;
 		this.description=description;
 		this.assignementCode=assignementCode;
 		this.exchangeRate=exchangeRate;
@@ -93,7 +96,7 @@ public class Transaction {
 		return assignementCode;
 	}
 
-	public String getExchangeRate() {
+	public double getExchangeRate() {
 		return exchangeRate;
 	}
 

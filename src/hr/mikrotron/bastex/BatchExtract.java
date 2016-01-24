@@ -6,6 +6,10 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+/**Batch processing of multiple bank statement files
+ * @author prexy
+ * @version 0.1
+ */
 public class BatchExtract {
 
 	private String source;
@@ -17,7 +21,7 @@ public class BatchExtract {
 		this.source = source;
 		if (readFiles()){
 			parseFiles();
-			//TODO export to CSV
+			Export.toCSV(bss, source + "/izvodi.csv");
 		}else{
 			write("Nema datoteka za čitanje!");
 		}
