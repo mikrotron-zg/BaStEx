@@ -1,0 +1,12 @@
+BaStEx - Bank Statement Extractor
+
+Current version: 0.1
+
+App that extracts bank statement data from PDF statments created by PBZ d.d. Currently works only for ALL statements (starting with 1) and statements MUST have correct names (combination of OIB and date). At this point, exports to CSV only.
+
+Importing project to Eclipse: 
+1. Edit build.xml line
+	<property name="ECLIPSE_HOME" value="../../apps/eclipse/"/>
+   so that value matches your Eclipse application directory
+
+2. In Eclipse go to File->New->Other->Java Project from Existing Ant BuildFile and select build.xml
