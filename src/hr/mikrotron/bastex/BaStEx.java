@@ -1,10 +1,5 @@
 package hr.mikrotron.bastex;
 
-import java.io.*;
-import java.text.DateFormat;
-import java.util.Locale;
-
-
 /**BankStatementExtractor command line version used for text extraction testing
  * @author prexy
  * @version 0.1
@@ -13,44 +8,25 @@ public class BaStEx {
 
 	public static final boolean DEBUG=false; //needs to be false for production code !!!
 	public static final double EPS=0.0001; //double comparison precision	
+	public static String OWNER; //bank account owner
 	
 	public static void main(String[] args) {
 
-		if (!DEBUG){
-			new BatchExtract("/home/prexy/Dropbox/MIKROTRON/izvodi");
-		}else{
-			String testFile="testdata/pbztest_big.pdf";
-			try{
-				System.out.println("Početak...\n\n");
-				//String res=new PDFManager(testFile).getText();
-				//writeToFile(testFile + ".out", res);
-				//System.out.println(clearedText(res));
-				BankStatementParser bsp=new BankStatementParser(new PDFManager(testFile).getText());
-				BankStatement bs=new BankStatement();
-				bsp.parse(bs);
-				System.out.println("\n\n\nRezultat: " + bs.getTransactionsCount() + " transakcija na izvodu " 
-						+ bs.getNumber() + " od " + 
-						DateFormat.getDateInstance(DateFormat.DEFAULT, Locale.GERMANY).format(bs.getDate()));
-				Transaction tr = bs.getTransaction(bs.getTransactionsCount()-1);
-				System.out.println("Zadnja transakcija: " + tr.getPayer() + " prema " + tr.getRecipient() + 
-						" u iznosu od " + tr.getAmount() + " kn. Stanje: " + tr.getBalance() + " kn");
-				System.out.println("Poziv primatelja prve transakcije: " + 
-						bs.getTransaction(0).getRecipientReferenceModel() +
-						" " + bs.getTransaction(0).getRecipientReferenceNumber());
-			}
-			catch (Exception e){
-				System.out.println(e.getMessage());
-			}			
-		}
+		if (checkProperties()) new BatchExtract(System.getProperty("bspath"));
+
 	}
 	
-	static String clearedText (String text){
-		String strings[]=text.split("\n");
-		StringBuilder sb=new StringBuilder();
-		for (int i=0 ; i<strings.length ; i++){
-			if (!strings[i].trim().isEmpty()) sb.append(strings[i].trim()+"\n");
+	private static boolean checkProperties(){
+		if (System.getProperty("bspath")==null || System.getProperty("company")==null){
+			System.out.println("Properties not set, run with -Dbspath=[path] -Dcompany=[company name] where"
+					+ " [path] and [company name] matches your data.");
+			return false;
+		}else{
+			OWNER=System.getProperty("company");
+			return true;
 		}
-		return sb.toString();
+		
 	}
+	
 	
 }

@@ -12,7 +12,6 @@ import java.util.Date;
  */
 public class BankStatementParser {
 
-	private final String OWNER = "MIKROTRON";
 	private final int MAX_TRANSACTIONS=1000;	//maximum allowed number of transactions in single statement
 	private Record record;
 	private int cursor;	//index cursor, equals to current position in record
@@ -126,7 +125,7 @@ public class BankStatementParser {
 		}
 		
 		Double amount=readAmount();
-		if (amount<0) payer= OWNER; else recipient = OWNER;
+		if (amount<0) payer= BaStEx.OWNER; else recipient = BaStEx.OWNER;
 		runningBalance += amount;
 		//using tricks to keep 2 decimal places precision for double :-)
 		runningBalance = BigDecimal.valueOf(runningBalance).setScale(2, RoundingMode.HALF_UP).doubleValue();
