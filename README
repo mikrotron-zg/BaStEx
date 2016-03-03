@@ -10,3 +10,5 @@ Importing project to Eclipse:
    so that value matches your Eclipse application directory
 
 2. In Eclipse go to File->New->Other->Java Project from Existing Ant BuildFile and select build.xml
+
+Brought to you by http://www.diykits.eu/
