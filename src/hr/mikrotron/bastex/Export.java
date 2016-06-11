@@ -51,10 +51,10 @@ public abstract class Export {
 	 */
 	private static String CSVtransaction(Transaction t){
 		SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
-		return t.getTransactionNumber() + d + t.getIBAN() + d + t.getPayer() + d +
-				t.getRecipient() + d + t.getPayerReferenceModel() + " " + t.getPayerReferenceNumber() + d +
+		return t.getTransactionNumber() + d + t.getIBAN() + d + t.getPayer().replace(";","") + d +
+				t.getRecipient().replace(";","") + d + t.getPayerReferenceModel() + " " + t.getPayerReferenceNumber() + d +
 				t.getRecipientReferenceModel() + " " + t.getRecipientReferenceNumber() + d +
-				t.getDescription() + d + t.getAssignementCode() + d + 
+				t.getDescription().replace(";","") + d + t.getAssignementCode() + d + 
 				sdf.format(t.getCurrencyDate()) + d + sdf.format(t.getExecutionDate()) + d +
 				t.getAmount() + d + t.getBalance() + "\n";
 	}
